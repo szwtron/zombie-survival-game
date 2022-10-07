@@ -64,3 +64,4 @@ crashlytics-build.properties
 
 #if you add new asset make sure to add the asset folder to be ignored
 /Zombie-Invasion/Assets/Art By Kandles/
+/Zombie-Invasion/Assets/TextMesh Pro/
