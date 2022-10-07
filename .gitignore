@@ -59,3 +59,8 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+#ignore ide generated files
+.idea
+
+#if you add new asset make sure to add the asset folder to be ignored
+/Zombie-Invasion/Assets/Art By Kandles/
