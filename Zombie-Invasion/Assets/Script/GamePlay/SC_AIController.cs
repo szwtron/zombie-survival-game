@@ -94,6 +94,8 @@ public class SC_AIController : MonoBehaviour
                     GameObject.FindGameObjectWithTag("Player").transform.position) >= 6f)
             {
                 m_IsPatrol = true;
+                m_CaughtPlayer = false;
+                Debug.Log(m_CaughtPlayer);
                 m_PlayerNear = false;
                 Move(speedWalk );
                 m_TimeToRotate = timeToRotate;
