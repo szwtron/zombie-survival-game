@@ -6,15 +6,16 @@ using UnityEngine;
 public class SC_gameMasterOver : MonoBehaviour
 {
     public static bool isGameOver;
-    
-    public GameObject cube;
 
     public GameObject gameOverUI;
 
+    private SC_AIController sc_aiController;
+    // public GameObject zombie;
+
     private void Start()
     {
+        // sc_aiController = zombie.GetComponent<SC_AIController>();
         isGameOver = false;
-        cube = GameObject.Find("dummy object");
     }
 
     // Update is called once per frame
@@ -25,10 +26,10 @@ public class SC_gameMasterOver : MonoBehaviour
             return;
         }
 
-        if (cube.transform.position.y >= 5)
-        {
-            endGame();
-        }
+        // if (sc_aiController.m_CaughtPlayer)
+        // {
+        //     endGame();
+        // }
     }
 
     void endGame()

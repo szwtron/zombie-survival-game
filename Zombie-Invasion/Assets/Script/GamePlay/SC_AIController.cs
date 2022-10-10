@@ -33,7 +33,7 @@ public class SC_AIController : MonoBehaviour
     private bool m_PlayerInRange;
     private bool m_PlayerNear;
     private bool m_IsPatrol;
-    private bool m_CaughtPlayer;
+    public bool m_CaughtPlayer;
     private bool m_IsMoving;
 
     public float startHealth;
@@ -104,10 +104,9 @@ public class SC_AIController : MonoBehaviour
             else
             {
                 if (Vector3.Distance(transform.position,
-                        GameObject.FindGameObjectWithTag("Player").transform.position) >= 2.5f)
+                        GameObject.FindGameObjectWithTag("Player").transform.position) <= 2.5f)
                 {
-                    Stop();
-                    m_WaitTime -= Time.deltaTime;
+                    CaughtPlayer();
                 }
             }
         }
