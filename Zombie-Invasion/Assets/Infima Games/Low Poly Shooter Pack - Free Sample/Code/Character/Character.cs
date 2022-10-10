@@ -149,6 +149,8 @@ namespace InfimaGames.LowPolyShooterPack
 		/// </summary>
 		private bool cursorLocked;
 
+		private float playerHealth;
+
 		#endregion
 
 		#region CONSTANTS
@@ -195,6 +197,7 @@ namespace InfimaGames.LowPolyShooterPack
 			layerActions = characterAnimator.GetLayerIndex("Layer Actions");
 			//Cache a reference to the overlay layer's index.
 			layerOverlay = characterAnimator.GetLayerIndex("Layer Overlay");
+			playerHealth = 100;
 		}
 
 		protected override void Update()
@@ -235,6 +238,16 @@ namespace InfimaGames.LowPolyShooterPack
 			{
 				//Compute.
 				characterKinematics.Compute();
+			}
+		}
+		public void TakeDamage(float damage)
+		{
+			playerHealth -= damage;
+			Debug.Log(playerHealth);
+			if (playerHealth <= 0)
+			{
+				Debug.Log("Player Die");
+				//Destroy(gameObject);
 			}
 		}
 		

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using InfimaGames.LowPolyShooterPack;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -37,7 +38,9 @@ public class SC_AIController : MonoBehaviour
     private bool m_IsMoving;
 
     public float startHealth;
+    public float hitDamage;
     private float hp;
+    public float attackTimer = 1f;
     
     
     // Start is called before the first frame update
@@ -65,6 +68,7 @@ public class SC_AIController : MonoBehaviour
     void Update()
     {
         EnvironmentView();
+        attackTimer -= Time.deltaTime;
         if (m_IsMoving)
         {
             if (!m_IsPatrol)
@@ -88,27 +92,33 @@ public class SC_AIController : MonoBehaviour
             navMeshAgent.SetDestination(m_PlayerPosition);
         }
 
-        if (navMeshAgent.remainingDistance <= 0.1f)
+        if (navMeshAgent.remainingDistance <= 1f)
         {
             if (!m_CaughtPlayer && Vector3.Distance(transform.position,
                     GameObject.FindGameObjectWithTag("Player").transform.position) >= 6f)
             {
                 m_IsPatrol = true;
                 m_CaughtPlayer = false;
-                Debug.Log(m_CaughtPlayer);
                 m_PlayerNear = false;
                 Move(speedWalk );
-                m_TimeToRotate = timeToRotate;
+                //m_TimeToRotate = timeToRotate;
                 //m_WaitTime = startWaitTime;
-                //navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
+                navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
                 
             }
             else
-            {
+            {   
+                //Debug.Log(Vector3.Distance(transform.position,
+                    //GameObject.FindGameObjectWithTag("Player").transform.position));
                 if (Vector3.Distance(transform.position,
-                        GameObject.FindGameObjectWithTag("Player").transform.position) <= 2.5f)
+                        GameObject.FindGameObjectWithTag("Player").transform.position) <= 1f && attackTimer <= 0f)
                 {
                     CaughtPlayer();
+                    attackTimer = 1f;
+                }
+                else
+                {
+                    m_CaughtPlayer = false;
                 }
             }
         }
@@ -171,6 +181,7 @@ public class SC_AIController : MonoBehaviour
     void CaughtPlayer()
     {
         m_CaughtPlayer = true;
+        GameObject.FindGameObjectWithTag("Player").GetComponent<Character>().TakeDamage(hitDamage);
     }
 
     void LookingPlayer(Vector3 player)
@@ -234,7 +245,7 @@ public class SC_AIController : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
+
     IEnumerator pause(){
         yield return new WaitForSeconds(5f);
         m_IsMoving = true;
