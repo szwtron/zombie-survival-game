@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using InfimaGames.LowPolyShooterPack;
 using UnityEngine;
 
 public class SC_gameMasterOver : MonoBehaviour
@@ -9,12 +10,13 @@ public class SC_gameMasterOver : MonoBehaviour
 
     public GameObject gameOverUI;
 
-    private SC_AIController sc_aiController;
-    // public GameObject zombie;
+    // private Character character;
+    //
+    // public GameObject hero;
 
     private void Start()
     {
-        // sc_aiController = zombie.GetComponent<SC_AIController>();
+        // character = hero.GetComponent<Character>();
         isGameOver = false;
     }
 
@@ -26,7 +28,7 @@ public class SC_gameMasterOver : MonoBehaviour
             return;
         }
 
-        // if (sc_aiController.m_CaughtPlayer)
+        // if (character.playerHealth <= 0)
         // {
         //     endGame();
         // }
