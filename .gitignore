@@ -63,5 +63,12 @@ crashlytics-build.properties
 .idea
 
 #if you add new asset make sure to add the asset folder to be ignored
-/Zombie-Invasion/Assets/Art By Kandles/
+/Zombie-Invasion/Assets/Art By Kandles/*
 /Zombie-Invasion/Assets/TextMesh Pro/
+/Zombie-Invasion/Assets/Infima Games/Low Poly Shooter Pack - Free Sample/*
+!/Zombie-Invasion/Assets/Infima Games/Low Poly Shooter Pack - Free Sample/Code
+/Zombie-Invasion/Assets/ToonyTinyPeople/
+/Zombie-Invasion/Assets/Low Poly Weapons VOL.1/
+/Zombie-Invasion/Assets/Pure Poly/
+/Zombie-Invasion/Assets/POLYGON city pack/
+

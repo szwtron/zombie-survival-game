@@ -19,6 +19,7 @@ public class SC_gameOver : MonoBehaviour
 
     public void retry()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
