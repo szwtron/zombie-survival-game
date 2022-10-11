@@ -250,7 +250,6 @@ namespace InfimaGames.LowPolyShooterPack
 				//Destroy(gameObject);
 			}
 		}
-		
 		#endregion
 
 		#region GETTERS

@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using InfimaGames.LowPolyShooterPack;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -14,6 +16,7 @@ public class SC_AIController : MonoBehaviour
     public float timeToRotate = 4;
     public float speedWalk = 6;
     public float speedRun = 9;
+    public bool attack = true;
     
     private float viewRadius = 15;
     public float viewAngle = 90;
@@ -35,17 +38,17 @@ public class SC_AIController : MonoBehaviour
     private bool m_PlayerNear;
     private bool m_IsPatrol;
     public bool m_CaughtPlayer;
-    private bool m_IsMoving;
+    private bool m_IsMoving = true;
 
     public float startHealth;
     public float hitDamage;
     private float hp;
     public float attackTimer = 1f;
-    
-    
+    private Animator animator;
     // Start is called before the first frame update
     void Start()
     {
+        animator = GetComponent<Animator>();
         hp = startHealth;
         
         m_PlayerPosition = Vector3.zero;
@@ -61,7 +64,6 @@ public class SC_AIController : MonoBehaviour
 
         navMeshAgent.isStopped = false;
         navMeshAgent.speed = speedWalk;
-        navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
     }
 
     // Update is called once per frame
@@ -69,8 +71,9 @@ public class SC_AIController : MonoBehaviour
     {
         EnvironmentView();
         attackTimer -= Time.deltaTime;
-        if (m_IsMoving)
+        if (m_IsMoving && hp > 0)
         {
+            playAnimation("isMoving" , true);
             if (!m_IsPatrol)
             {
                 Chasing();
@@ -80,6 +83,19 @@ public class SC_AIController : MonoBehaviour
                 Patroling();
             }
         }
+        else
+        {
+            Move(0);
+        }
+    }
+
+    void playAnimation(string animationString = "isMoving", bool value = false)
+    {
+        if (animationString == "isAttacking")
+        {
+            Debug.Log(value);
+        }
+        animator.SetBool(animationString, value);
     }
 
     private void Chasing()
@@ -92,7 +108,7 @@ public class SC_AIController : MonoBehaviour
             navMeshAgent.SetDestination(m_PlayerPosition);
         }
 
-        if (navMeshAgent.remainingDistance <= 1f)
+        if (navMeshAgent.remainingDistance <= 2.5f)
         {
             if (!m_CaughtPlayer && Vector3.Distance(transform.position,
                     GameObject.FindGameObjectWithTag("Player").transform.position) >= 6f)
@@ -101,20 +117,16 @@ public class SC_AIController : MonoBehaviour
                 m_CaughtPlayer = false;
                 m_PlayerNear = false;
                 Move(speedWalk );
-                //m_TimeToRotate = timeToRotate;
-                //m_WaitTime = startWaitTime;
                 navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
                 
             }
             else
-            {   
-                //Debug.Log(Vector3.Distance(transform.position,
-                    //GameObject.FindGameObjectWithTag("Player").transform.position));
+            {
                 if (Vector3.Distance(transform.position,
-                        GameObject.FindGameObjectWithTag("Player").transform.position) <= 1f && attackTimer <= 0f)
+                        GameObject.FindGameObjectWithTag("Player").transform.position) <= 2.5f && attackTimer <= 0f)
                 {
                     CaughtPlayer();
-                    attackTimer = 1f;
+                    attackTimer = 2f;
                 }
                 else
                 {
@@ -144,8 +156,7 @@ public class SC_AIController : MonoBehaviour
         {
             m_PlayerNear = false;
             playerLastPosition = Vector3.zero;
-            //navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
-            if(navMeshAgent.remainingDistance <= 0.1f) 
+            if(navMeshAgent.remainingDistance <= 1f) 
             {
                 NextPoint();
                 Move(speedWalk);
@@ -170,9 +181,6 @@ public class SC_AIController : MonoBehaviour
         m_CurrentWaypointIndex += 1;
         if(m_CurrentWaypointIndex >= waypoints.Length)
         {
-            
-            m_IsMoving = false;
-            StartCoroutine( pause());
             m_CurrentWaypointIndex = 0;
         }
         navMeshAgent.SetDestination(waypoints[m_CurrentWaypointIndex].position); 
@@ -180,8 +188,12 @@ public class SC_AIController : MonoBehaviour
 
     void CaughtPlayer()
     {
+        Move(0);
         m_CaughtPlayer = true;
+        playAnimation("isAttacking", true);
+        StartCoroutine(damageDelay());
         GameObject.FindGameObjectWithTag("Player").GetComponent<Character>().TakeDamage(hitDamage);
+        playAnimation("isMoving", true);
     }
 
     void LookingPlayer(Vector3 player)
@@ -242,13 +254,30 @@ public class SC_AIController : MonoBehaviour
         hp -= damage;
         if (hp <= 0)
         {
-            Destroy(gameObject);
+            playAnimation();
+            playAnimation("isDead", true);
+            StartCoroutine(deadDelay());
         }
     }
 
-    IEnumerator pause(){
-        yield return new WaitForSeconds(5f);
-        m_IsMoving = true;
+    IEnumerator deadDelay(){
+        yield return new WaitForSeconds(7f);
+        Destroy(gameObject);
     }
     
+    IEnumerator damageDelay(){
+        yield return new WaitForSeconds(1f);
+        playAnimation("isAttacking");
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        
+        if (attack && collision.gameObject.tag == "Enemy")
+        {
+            playAnimation("isAttacking");
+        }
+        
+            
+    }
 }
