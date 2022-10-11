@@ -6,10 +6,15 @@ using UnityEngine;
 
 public class SC_Finish : MonoBehaviour
 {
+    public GameObject hero;
+
+    public GameObject finishGameUI;
+
+    public bool isGameFinished;
     // Start is called before the first frame update
     void Start()
     {
-        
+        hero = GameObject.FindWithTag("Player");
     }
 
     // Update is called once per frame
@@ -22,7 +27,17 @@ public class SC_Finish : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            Debug.Log("Finish");
+            other.GetComponent<Character>().cursorLocked = !other.GetComponent<Character>().cursorLocked;
+            other.GetComponent<Character>().UpdateCursorState();
+            Time.timeScale = 0f;
+            finishGame();
         }
+    }
+    
+    void finishGame()
+    {
+        isGameFinished = true;
+        
+        finishGameUI.SetActive(true);
     }
 }

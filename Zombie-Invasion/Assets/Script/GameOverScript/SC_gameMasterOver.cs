@@ -10,28 +10,20 @@ public class SC_gameMasterOver : MonoBehaviour
 
     public GameObject gameOverUI;
 
-    // private Character character;
-    //
-    // public GameObject hero;
+    private Character character;
+    
+    public GameObject hero;
 
     private void Start()
     {
-        // character = hero.GetComponent<Character>();
+        character = hero.GetComponent<Character>();
         isGameOver = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (isGameOver)
-        {
-            return;
-        }
-
-        // if (character.playerHealth <= 0)
-        // {
-        //     endGame();
-        // }
+        
     }
 
     void endGame()

@@ -69,32 +69,31 @@ public class SC_AIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        EnvironmentView();
-        attackTimer -= Time.deltaTime;
-        if (m_IsMoving && hp > 0)
+        if (hp > 0)
         {
-            playAnimation("isMoving" , true);
-            if (!m_IsPatrol)
+            EnvironmentView();
+            attackTimer -= Time.deltaTime;
+            if (m_IsMoving)
             {
-                Chasing();
+                playAnimation("isMoving", true);
+                if (!m_IsPatrol)
+                {
+                    Chasing();
+                }
+                else
+                {
+                    Patroling();
+                }
             }
             else
             {
-                Patroling();
+                Move(0);
             }
-        }
-        else
-        {
-            Move(0);
         }
     }
 
     void playAnimation(string animationString = "isMoving", bool value = false)
     {
-        if (animationString == "isAttacking")
-        {
-            Debug.Log(value);
-        }
         animator.SetBool(animationString, value);
     }
 
@@ -102,16 +101,16 @@ public class SC_AIController : MonoBehaviour
     {
         m_PlayerNear = false;
         playerLastPosition = Vector3.zero;
-        if (!m_CaughtPlayer)
+        if (!m_CaughtPlayer )
         {
             Move(speedRun );
             navMeshAgent.SetDestination(m_PlayerPosition);
         }
 
-        if (navMeshAgent.remainingDistance <= 2.5f)
+        if (navMeshAgent.remainingDistance <= 2.5f )
         {
             if (!m_CaughtPlayer && Vector3.Distance(transform.position,
-                    GameObject.FindGameObjectWithTag("Player").transform.position) >= 6f)
+                    GameObject.FindGameObjectWithTag("Player").transform.position) >= 6f )
             {
                 m_IsPatrol = true;
                 m_CaughtPlayer = false;
@@ -123,7 +122,7 @@ public class SC_AIController : MonoBehaviour
             else
             {
                 if (Vector3.Distance(transform.position,
-                        GameObject.FindGameObjectWithTag("Player").transform.position) <= 2.5f && attackTimer <= 0f)
+                        GameObject.FindGameObjectWithTag("Player").transform.position) <= 2.5f && attackTimer <= 0f )
                 {
                     CaughtPlayer();
                     attackTimer = 2f;
@@ -193,13 +192,13 @@ public class SC_AIController : MonoBehaviour
         playAnimation("isAttacking", true);
         StartCoroutine(damageDelay());
         GameObject.FindGameObjectWithTag("Player").GetComponent<Character>().TakeDamage(hitDamage);
-        playAnimation("isMoving", true);
+        // playAnimation("isMoving", true);
     }
 
     void LookingPlayer(Vector3 player)
     {
         navMeshAgent.SetDestination(player);
-        if (Vector3.Distance(transform.position, player) <= 0.3)
+        if (Vector3.Distance(transform.position, player) <= 0.3 )
         {
             if (m_WaitTime <= 0)
             {
@@ -254,6 +253,7 @@ public class SC_AIController : MonoBehaviour
         hp -= damage;
         if (hp <= 0)
         {
+            Move(0);
             playAnimation();
             playAnimation("isDead", true);
             StartCoroutine(deadDelay());
@@ -261,7 +261,7 @@ public class SC_AIController : MonoBehaviour
     }
 
     IEnumerator deadDelay(){
-        yield return new WaitForSeconds(7f);
+        yield return new WaitForSeconds(2f);
         Destroy(gameObject);
     }
     

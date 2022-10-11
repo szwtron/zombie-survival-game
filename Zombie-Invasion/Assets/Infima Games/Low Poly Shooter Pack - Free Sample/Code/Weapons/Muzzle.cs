@@ -117,7 +117,6 @@ namespace InfimaGames.LowPolyShooterPack
             if (flashLight != null)
             {
                 //Enable the light.
-                Debug.Log(flashLight);
                 flashLight.enabled = true;
                 //Disable the light after a few seconds.
                 StartCoroutine(nameof(DisableLight));

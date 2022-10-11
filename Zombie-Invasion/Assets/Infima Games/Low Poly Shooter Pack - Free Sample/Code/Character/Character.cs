@@ -147,9 +147,17 @@ namespace InfimaGames.LowPolyShooterPack
 		/// <summary>
 		/// True if the game cursor is locked! Used when pressing "Escape" to allow developers to more easily access the editor.
 		/// </summary>
-		private bool cursorLocked;
+		public bool cursorLocked;
 
-		private float playerHealth;
+		public float playerHealth;
+		
+		public bool isPaused = false;
+
+		public GameObject pauseMenuUI;
+		
+		public static bool isGameOver;
+		
+		public GameObject gameOverUI;
 
 		#endregion
 
@@ -191,6 +199,9 @@ namespace InfimaGames.LowPolyShooterPack
 		}
 		protected override void Start()
 		{
+			isPaused = false;
+			isGameOver = false;
+			Time.timeScale = 1f;
 			//Cache a reference to the holster layer's index.
 			layerHolster = characterAnimator.GetLayerIndex("Layer Holster");
 			//Cache a reference to the action layer's index.
@@ -202,6 +213,19 @@ namespace InfimaGames.LowPolyShooterPack
 
 		protected override void Update()
 		{
+			if (isGameOver)
+			{
+				return;
+			}
+			
+			if (playerHealth <= 0)
+			{
+				//Toggle the cursor locked value.
+				cursorLocked = !cursorLocked;
+				//Update the cursor's state.
+				UpdateCursorState();
+				endGame();
+			}
 			//Match Aim.
 			aiming = holdingButtonAim && CanAim();
 			//Match Run.
@@ -221,6 +245,13 @@ namespace InfimaGames.LowPolyShooterPack
 
 			//Update Animator.
 			UpdateAnimator();
+		}
+		
+		void endGame()
+		{
+			isGameOver = true;
+			Time.timeScale = 0f;
+			gameOverUI.SetActive(true);
 		}
 
 		protected override void LateUpdate()
@@ -243,11 +274,6 @@ namespace InfimaGames.LowPolyShooterPack
 		public void TakeDamage(float damage)
 		{
 			playerHealth -= damage;
-			if (playerHealth <= 0)
-			{
-				Debug.Log("Player Die");
-				//Destroy(gameObject);
-			}
 		}
 		
 		#endregion
@@ -398,12 +424,26 @@ namespace InfimaGames.LowPolyShooterPack
 		/// <summary>
 		/// Updates the cursor state based on the value of the cursorLocked variable.
 		/// </summary>
-		private void UpdateCursorState()
+		public void UpdateCursorState()
 		{
 			//Update cursor visibility.
 			Cursor.visible = !cursorLocked;
 			//Update cursor lock state.
 			Cursor.lockState = cursorLocked ? CursorLockMode.Locked : CursorLockMode.None;
+		}
+		
+		void Resume()
+		{
+			pauseMenuUI.SetActive(false);
+			Time.timeScale = 1f;
+			isPaused = false;
+		}
+    
+		void Pause()
+		{
+			pauseMenuUI.SetActive(true);
+			Time.timeScale = 0f;
+			isPaused = true;
 		}
 
 		/// <summary>
@@ -781,6 +821,14 @@ namespace InfimaGames.LowPolyShooterPack
 					cursorLocked = !cursorLocked;
 					//Update the cursor's state.
 					UpdateCursorState();
+					if (isPaused)
+					{
+						Resume();
+					}
+					else
+					{
+						Pause();
+					}
 					break;
 			}
 		}
