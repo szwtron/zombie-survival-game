@@ -243,13 +243,13 @@ namespace InfimaGames.LowPolyShooterPack
 		public void TakeDamage(float damage)
 		{
 			playerHealth -= damage;
-			Debug.Log(playerHealth);
 			if (playerHealth <= 0)
 			{
 				Debug.Log("Player Die");
 				//Destroy(gameObject);
 			}
 		}
+		
 		#endregion
 
 		#region GETTERS
